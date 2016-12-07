@@ -23,7 +23,7 @@
 BACKUP2 AS 
 (
 SELECT
-'restore database '+ b.database_name + ' from ' + STUFF((SELECT ' , disk = ''' + a.physical_device_name +''' with norecovery;'
+'restore database ['+ b.database_name + '] from ' + STUFF((SELECT ' , disk = ''' + a.physical_device_name +''' with norecovery;'
             from msdb.dbo.backupmediafamily a
             where a.media_set_id = b.media_set_id
             FOR XML PATH('')), 1, 2, '') AS CODE	
