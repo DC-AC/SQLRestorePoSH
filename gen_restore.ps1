@@ -33,10 +33,20 @@ foreach ($file in $configFiles)
 }
 
 
+if (test-path C:\temp\restore_full.sql)
+{if ((get-item C:\temp\restore_full.sql).length -gt 0kb)
+{
 Invoke-Sqlcmd -ServerInstance $target -InputFile C:\temp\restore_full.sql
+}
+}
+else {"No full backups to restore"}
 
 
+if (test-path C:\temp\restore_diff.sql)
+{if ((get-item C:\temp\restore_diff.sql).length -gt 0kb)
+{
 Invoke-Sqlcmd -ServerInstance $target -InputFile C:\temp\restore_diff.sql
-
-
+}
+}
+else {"No diff backups to restore"}
 
