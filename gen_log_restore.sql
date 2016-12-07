@@ -1,4 +1,3 @@
-
 ;WITH backup_cte AS
 (
     SELECT
@@ -22,13 +21,20 @@
 ),
 BACKUP2 AS 
 (
-SELECT
+SELECT distinct
 'restore database ['+ b.database_name + '] from ' + STUFF((SELECT ' , disk = ''' + a.physical_device_name +''' with norecovery;'
             from msdb.dbo.backupmediafamily a
             where a.media_set_id = b.media_set_id
-            FOR XML PATH('')), 1, 2, '') AS CODE	
+            FOR XML PATH('')), 1, 2, '') AS CODE ,
+   b.backup_finish_date,b.database_name
  FROM backup_cte b, msdb.dbo.backupmediafamily m
- where rownum = 1 AND b.media_set_id=m.media_set_id  AND B.backup_type = 'log'
- --order by b.backup_finish_date,b.database_name
+ where b.media_set_id=m.media_set_id  AND B.backup_type = 'log'
+ and b.backup_finish_date >= (select max(backup_finish_date) 
+        from backup_cte inter
+        where inter.backup_type in ('database', 'differential') 
+         and inter.rownum=1
+         and inter.database_name = b.database_name)
+--order by b.backup_finish_date,b.database_name
  ) 
-SELECT DISTINCT CODE FROM BACKUP2
+SELECT CODE FROM BACKUP2 b
+order by b.database_name, b.backup_finish_date
