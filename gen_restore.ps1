@@ -1,6 +1,10 @@
 $Source = read-host -Prompt 'What is source SQL Server for backups?'
 $target = read-host -Prompt 'What is target SQL Server for restores?'
 
+if (test-path C:\temp\restore_full.sql) {remove-item C:\temp\restore_full.sql}
+if (Test-Path C:\temp\restore_diff.sql) {remove-item C:\temp\restore_diff.sql}
+if (Test-Path C:\temp\restore_log.sql) {Remove-Item C:\temp\restore_log.sql}
+
 $1=Invoke-SQLCmd -ServerInstance $source -InputFIle 'C:\temp\gen_full_restore.sql'
 if($1.count -gt 0)
  {  
