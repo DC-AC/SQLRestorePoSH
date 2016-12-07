@@ -29,7 +29,7 @@ SELECT
             where a.media_set_id = b.media_set_id
             FOR XML PATH('')), 1, 2, '') AS CODE	
  FROM backup_cte b, msdb.dbo.backupmediafamily m
- where rownum = 1 AND b.media_set_id=m.media_set_id  AND B.backup_type = 'log' 
+ where rownum = 1 AND b.media_set_id=m.media_set_id  AND B.backup_type = 'differential' 
  --order by b.backup_finish_date,b.database_name
  ) 
 SELECT DISTINCT CODE FROM BACKUP2
