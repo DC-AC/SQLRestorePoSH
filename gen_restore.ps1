@@ -27,10 +27,10 @@ $2.ItemArray[0] | out-file C:\temp\restore_diff.sql
 }
 else {echo "There are no differential backups"}
 
-$2=Invoke-SQLCmd -ServerInstance $source -InputFIle 'C:\temp\gen_log_restore.sql'
+$3=Invoke-SQLCmd -ServerInstance $source -InputFIle 'C:\temp\gen_log_restore.sql'
 if ($3.count -gt 0)
 {
-$2.ItemArray[0] | out-file C:\temp\restore_log.sql
+$3.ItemArray[0] | out-file C:\temp\restore_log.sql
 }
 else { echo "There are no log backups" }
 
@@ -58,6 +58,14 @@ if (test-path C:\temp\restore_diff.sql)
 {if ((get-item C:\temp\restore_diff.sql).length -gt 0kb)
 {
 Invoke-Sqlcmd -ServerInstance $target -InputFile C:\temp\restore_diff.sql
+}
+}
+else {"No diff backups to restore"}
+
+if (test-path C:\temp\restore_log.sql)
+{if ((get-item C:\temp\restore_log.sql).length -gt 0kb)
+{
+Invoke-Sqlcmd -ServerInstance $target -InputFile C:\temp\restore_log.sql
 }
 }
 else {"No diff backups to restore"}
