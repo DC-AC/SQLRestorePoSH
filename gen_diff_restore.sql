@@ -20,6 +20,7 @@ set nocount on
             ),
    media_set_id
     FROM msdb.dbo.backupset
+     where database_name not in ('master', 'model', 'msdb')
 ),
 BACKUP2 AS 
 (
