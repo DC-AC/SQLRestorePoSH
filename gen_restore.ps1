@@ -1,11 +1,18 @@
 $Source = read-host -Prompt 'What is source SQL Server for backups?'
 $target = read-host -Prompt 'What is target SQL Server for restores?'
 
+$sql = "SELECT SERVERPROPERTY('ComputerNamePhysicalNetBIOS')"
+$svr = Invoke-Sqlcmd -ServerInstance $Source -Query $sql
+$svr = $svr.ItemArray[0]
+$svr = [String]$svr
+
+
+
 if (test-path C:\temp\restore_full.sql) {remove-item C:\temp\restore_full.sql}
 if (Test-Path C:\temp\restore_diff.sql) {remove-item C:\temp\restore_diff.sql}
 if (Test-Path C:\temp\restore_log.sql) {Remove-Item C:\temp\restore_log.sql}
 
-$1=Invoke-SQLCmd -ServerInstance $source -InputFIle 'C:\temp\gen_full_restore.sql'
+$1=Invoke-SQLCmd -ServerInstance $source -InputFile 'C:\temp\gen_full_restore.sql'
 if($1.count -gt 0)
  {  
 $1.ItemArray[0] | out-file C:\temp\restore_full.sql
@@ -28,11 +35,12 @@ $2.ItemArray[0] | out-file C:\temp\restore_log.sql
 else { echo "There are no log backups" }
 
 
+
 $configFiles = Get-ChildItem  C:\temp\restore*.sql -rec
 foreach ($file in $configFiles)
 {
     (Get-Content $file.PSPath) |
-    Foreach-Object { $_ -replace "C:", "\\$source\c$" } |
+    Foreach-Object { $_ -replace "C:", "\\$svr\c$" } |
     Set-Content $file.PSPath
 }
 
